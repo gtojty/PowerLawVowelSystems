@@ -90,37 +90,37 @@ r.squaredGLMM(lm_all)
 
 # global level lme
 lme_all <- lmer(log10(Focalization) ~ log10(Effective_DE) 
-                + (1|ISO693_Code) + (1|Geographic_Region) + (1|Family), data = df, control=lmerControl(optCtrl=list(maxfun=20000)))
+                + (1|Geographic_Region/ISO693_Code) + (1|Family), data = df, control=lmerControl(optCtrl=list(maxfun=20000)))
 summary(lme_all)
-# REML criterion at convergence: -870.7
+# REML criterion at convergence: -879.1
 # 
 # Scaled residuals: 
 #   Min      1Q  Median      3Q     Max 
-# -3.6331 -0.5422 -0.0147  0.5648  3.0978 
+# -3.1771 -0.5506 -0.0168  0.5490  2.8958 
 # 
 # Random effects:
-#   Groups          Name        Variance Std.Dev.
-# ISO693_Code       (Intercept) 0.004578 0.06766 
-# Family            (Intercept) 0.003161 0.05622 
-# Geographic_Region (Intercept) 0.001926 0.04388 
-# Residual                                          0.007639 0.08740 
-# Number of obs: 532, groups:  ISO693_Code, 221; Family, 39; Geographic_Region, 8
+#   Groups                        Name        Variance Std.Dev.
+# ISO693_Code:Geographic_Region (Intercept) 0.004594 0.06778 
+# Family                        (Intercept) 0.003057 0.05529 
+# Geographic_Region             (Intercept) 0.002154 0.04641 
+# Residual                                  0.007422 0.08615 
+# Number of obs: 532, groups:  ISO693_Code:Geographic_Region, 225; Family, 39; Geographic_Region, 8
 # 
 # Fixed effects:
 #   Estimate Std. Error        df t value Pr(>|t|)    
-# (Intercept)          -1.06175    0.02660  31.27623  -39.91   <2e-16 ***
-#   log10(Effective_DE)  -0.76524    0.02804 505.02252  -27.29   <2e-16 ***
+# (Intercept)          -1.05905    0.02719  23.87535  -38.95   <2e-16 ***
+#   log10(Effective_DE)  -0.76642    0.02794 517.07899  -27.43   <2e-16 ***
 #   ---
 #   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 # 
 # Correlation of Fixed Effects:
 #   (Intr)
-# lg10(Ef_DE) 0.607 
+# lg10(Ef_DE) 0.597 
 
 # calculate r square
 r.squaredGLMM(lme_all)
 # R2m       R2c
-# 0.5614337 0.8063839
+# 0.5632845 0.811847
 
 #### So, lmer model is better than simple lm model!
 
@@ -351,7 +351,7 @@ for(family in familyList){
   }else{
     # train lme model
     result <- try(lme_family <- lmer(log10(Focalization) ~ log10(Effective_DE) 
-                                     + (1|ISO693_Code) + (1|Geographic_Region), data = subdf, control=lmerControl(optCtrl=list(maxfun=20000))), silent = TRUE)
+                                     + (1|Geographic_Region/ISO693_Code), data = subdf, control=lmerControl(optCtrl=list(maxfun=20000))), silent = TRUE)
     if(class(result)[1]=='try-error'){ 
       # all samples are from the same Geographic_Region, use lm model instead
       result <- try(lm_family <- lm(log10(Focalization) ~ log10(Effective_DE), data = subdf), silent = TRUE)
@@ -389,7 +389,7 @@ for(family in familyList){
   nosample <- nrow(subdf)
   # train lme model
   result <- try(lme_family <- lmer(log10(Focalization) ~ log10(Effective_DE) 
-                                   + (1|ISO693_Code) + (1|Geographic_Region), data = subdf, control=lmerControl(optCtrl=list(maxfun=20000))), silent = TRUE)
+                                   + (1|Geographic_Region/ISO693_Code), data = subdf, control=lmerControl(optCtrl=list(maxfun=20000))), silent = TRUE)
   # log ~ log linear
   if(class(result)[1]=='try-error'){ 
     # use lm 
